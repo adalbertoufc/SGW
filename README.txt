@@ -1,5 +1,5 @@
 O SGW é um sistema de gerenciamento WEB bastante útil para quem deseja monitorar e acompanhar o comportamento e as configurações das máquinas presentes na rede. Com uma interface simples e bastante amigável, ele se mostra muito eficaz e prático até  mesmo para usuários leigos. Todo o seu conjunto de ações é implementado em shell script. Assim as ações do SGW são implementadas por dois scripts. Um deles deve estar presente na máquina a ser monitorada e tem como finalidade coletar as informações dessa máquina e gerar uma saída com essas informações quando for executado. O outro script deve estar presente nas máquinas na qual se deseja visualizar as informações, e pode ser chamado de script principal. Ele será responsável pela comunicação e  busca das informações nas máquinas a serem monitoradas. Além disso ele irá  analisar as informações obtidas das máquinas a serem monitoradas e irá determinar como essas informações serão formatadas para serem exibidas no navegador. Esse script principal irá gerar um arquivo HTML com todas as informações devidamente formatadas para serem exibidas no navegador. O código fonte desses scripts estão expostos nos quadros I e II respectivamente, logo abaixo. Logo em seguida será feita uma breve apresentação das principais partes de cada um desses scripts.
-===============================================================================================================================================
+==================================================================================================
 							Quadro I. Script Principal
 
      1	#!/bin/bash 
@@ -252,12 +252,11 @@ O SGW é um sistema de gerenciamento WEB bastante útil para quem deseja monitor
    248	end_body 
    249	end_html
 
-===============================================================================================================================================
+==================================================================================================
 
 	Analisando o quadro I, percebe-se a existência de várias funções responsáveis pela formação do arquivo HTML que irá permitir a visualização das informações no navegador. Essas funções podem ser identificadas principalmente entre as linhas 15-30, 119-134 e 224-235.
 
-
-===============================================================================================================================================
+==================================================================================================
     15	function begin_html() 
     16	{ 
     17		echo "<html>" >> index.html 
@@ -275,7 +274,7 @@ O SGW é um sistema de gerenciamento WEB bastante útil para quem deseja monitor
     29		echo -e "\t\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />" >> index.html 
     30	} 
 
-===============================================================================================================================================
+==================================================================================================
 
    119	function end_head() 
    120	{ 
@@ -294,7 +293,7 @@ O SGW é um sistema de gerenciamento WEB bastante útil para quem deseja monitor
    133	        echo -e "\t\t<div id="content">" >> index.html 
    134	} 
 
-===============================================================================================================================================
+==================================================================================================
 
    224	function end_content() 
    225	{ 
@@ -309,13 +308,13 @@ O SGW é um sistema de gerenciamento WEB bastante útil para quem deseja monitor
    234		echo "</html>" >> index.html 
    235	}
 
-===============================================================================================================================================
+==================================================================================================
 
 	Cada uma dessas funções desse intervalo se restringem especificamente a anexar no arquivo index.html uma tag. Por exemplo, a função begin_html irá anexar no arquivo index.html a tag <html> para indicar o início do documento html. Já a função end_html irá anexar no arquivo index.html a tag </html> para indicar o fim do documento html. 
 
 	Entre as linhas 31-118 está o escopo da função tag_style que irá definir o estilo dá página usando CSS. 
 
-===============================================================================================================================================
+==================================================================================================
 
     31	function tag_style() 
     32	{ 
@@ -407,11 +406,11 @@ O SGW é um sistema de gerenciamento WEB bastante útil para quem deseja monitor
    118	} 
 
 
-===============================================================================================================================================
+==================================================================================================
 
 	As funções principais do script que implementam suas funcionalidades específicas se concentram entre as linhas 135-223. Essas funções são: find_info, verify_load, isON e a div_machines.
 
-===============================================================================================================================================
+==================================================================================================
 
    135	function find_info() 
    136	{ 
@@ -503,12 +502,12 @@ O SGW é um sistema de gerenciamento WEB bastante útil para quem deseja monitor
    222		fi 
    223	} 
 
-===============================================================================================================================================
+==================================================================================================
 
 Inicialmente a função div_machines recebe como parâmetro um arquivo que possui todos os usuários e os IPs das máquinas a serem monitoradas. A primeira coisa que essa função irá fazer, será chamar a função isON para verificar quais são as máquinas que estão ligadas. Essa função irá ter como saída um array com todos os IPs das máquinas que estão ligadas em um determinado momento. Em seguida, a função div_machines irá testar se a quantidade de máquinas ligadas é maior que 0. Se o resultado do teste for verdadeiro será testado em seguida se o sshserver esta instalado e o script de coleta das informações estão presentes máquinas a serem monitoradas. Se o resultado desse outro teste também for verdadeiro então a função find_info será chamada recebendo como parâmetro a máquina corrente no laço para que sejam extraídas as informações da mesma. A função irá retornar todas as informações concatenadas por “:” (ponto ponto) e irá guardar essas informações na variável informs. Em seguida o conteúdo da variável informs será fragmentado e todas as informações serão armazenadas em uma variável diferente para cada tipo de informação.  No passo seguinte a função verify_load será chamada recebendo como parâmetro o número de núcleos da CPU e a carga atual (load average) da máquina. Essas informações serão utilizadas para verificar se a máquina está com a carga adequada, intermediária ou sobrecarregada. A função verify_load terá como saída 3 valores possíveis: 1 (indicando que a carga é adequada), 2 (indicando que a carga esta em um nível intermediário) e 3 (indicando que há sobrecarga). Essa saída será guardada na variável out que permitirá definir a imagem de status através de um teste condicional. Assim definido todas as variáveis e suas informações, seus valores serão agregados junto ao HTML para posterior exibição no navegador.
 
 
-===============================================================================================================================================
+==================================================================================================
 					Quadro II. script de coleta de informações nos clientes.
      1	#!/bin/bash 
      2	 
@@ -524,6 +523,6 @@ Inicialmente a função div_machines recebe como parâmetro um arquivo que possu
     12	fi 
     13	echo "$MODELO:$NUM_NUCLEOS:$MEM_EM_GIGA:$CARGA" 
 
-===============================================================================================================================================
+==================================================================================================
 
 Analisando agora o script do quadro II, é possível observar que nas linhas 3-8, há várias variáveis que guardam as saídas de sequências de comandos. Na linha 3 por exemplo, a variável modelo guarda o modelo da máquina monitorada e a linha 4 guarda o numero de núcleos, ambos extraídos do arquivo /proc/cpuinfo. Na linha 5 a variável MEM_TOTAL guarda a quantidade de memória RAM, extraída do arquivo /proc/meminfo e na linha 6 o conteúdo de MEM_TOTAL é transformado em GB e guardado na variável MEM_EM_GIGA. Na linha 7 é armazenado a carga da máquina na variável CARGA. Das linhas 9-12, ocorre uma formatação do conteúdo da variável MEM_EM_GIGA caso ela seja menor que 0 e comece com “.” (ponto), será acrescentado um zero antes do ponto e as letras GB depois do conteúdo de MEM_E_GIGA. Em seguida, o conteúdo de todas as variáveis são concatenados pelo caractere “:” e exibidos na saída padrão.
